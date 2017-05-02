@@ -4,7 +4,7 @@ Tools provided to recreate NLI corpus from the italki website
 Collect data as:
 
 ```
-python scrape.py italkiDataset
+python scrape.py --output-dir=italkiDataset french german
 ```
 
 To recreate the same dataset as collected in 2017, pass the URL list file as an additional argument:
