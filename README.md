@@ -1,6 +1,6 @@
 # italkiCorpus
 
-The current version of the dataset can be [downloaded here](https://github.com/ghomasHudson/italkiCorpus/releases/tag/v1.0)
+
 
 ## Gathering new data
 Tools provided to recreate NLI corpus from the italki website
