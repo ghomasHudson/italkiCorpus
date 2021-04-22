@@ -8,13 +8,13 @@ Due to copyright reasons we don't publish the raw data. Instead, tools are provi
 
 To recreate the exact same dataset as collected in 2017, pass the ID list file:
 
-```
+```bash
 python scrape.py recreate 2017_ids.txt
 ```
 
 Collect your own new data using:
 
-```
+```bash
 python scrape.py scrape arabic chinese french german hindi italian japanese korean russian spanish turkish
 ```
 
@@ -31,7 +31,7 @@ In the `benchmarks` folder there are 2 scripts:
 2. `train_bert.py` - Trains a simple bert model using the dataset.
 
 Feel free to use and adapt these for your own research. To include this in your own script, you can write:
-```
+```python
 import datasets
 ds = datasets.load_dataset("italki_nli", data="../italki_data")
 print(ds["train"][0])
