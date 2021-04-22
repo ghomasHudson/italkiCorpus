@@ -31,3 +31,40 @@ If you use this dataset in your work, please cite:
   organization={Link{\"o}ping University Electronic Press}
 }
 ```
+
+### Dataset Metadata
+The following table is necessary for this dataset to be indexed by search
+engines such as <a href="https://g.co/datasetsearch">Google Dataset Search</a>.
+<div itemscope itemtype="http://schema.org/Dataset">
+<table>
+  <tr>
+    <th>property</th>
+    <th>value</th>
+  </tr>
+  <tr>
+    <td>name</td>
+    <td><code itemprop="name">Italki Native Language Identification Dataset</code></td>
+  </tr>
+  <tr>
+    <td>alternateName</td>
+    <td><code itemprop="alternateName">Italki</code></td>
+  </tr>
+  <tr>
+    <td>url</td>
+    <td><code itemprop="url">https://github.com/ghomasHudson/italkiCorpus</code></td>
+  </tr>
+  <tr>
+    <td>sameAs</td>
+    <td><code itemprop="sameAs">https://github.com/ghomasHudson/italkiCorpus</code></td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td><code itemprop="description">This repository contains the italki Native Language Identification (NLI) dataset. It includes scripts to download the data along with the ids to recreate the 2017 dataset.</code></td>
+  </tr>
+  <tr>
+    <td>citation</td>
+    <td><code itemprop="citation">https://ep.liu.se/ecp/article.asp?issue=155&article=012</code></td>
+  </tr>
+</table>
+</div>
+
