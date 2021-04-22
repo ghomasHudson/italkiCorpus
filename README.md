@@ -3,20 +3,34 @@
 Dataset for the work: [On the Development of a Large Scale Corpus for Native Language Identification](https://sure.sunderland.ac.uk/id/eprint/10446/1/On%20the%20Development%20of%20Large%20Scale%20Corpus%20for%20Native%20Language%20Identification%20.pdf).
 
 
-## Gathering new data
-Tools provided to recreate NLI corpus from the italki website
-
-Collect data as:
-
-```
-python scrape.py scrape arabic chinese french german hindi italian japanese korean russian spanish turkish
-```
+## Gathering data
+Due to copyright reasons we don't publish the raw data. Instead, tools are provided to recreate NLI corpus from the italki website.
 
 To recreate the exact same dataset as collected in 2017, pass the ID list file:
 
 ```
 python scrape.py recreate 2017_ids.txt
 ```
+
+Collect your own new data using:
+
+```
+python scrape.py scrape arabic chinese french german hindi italian japanese korean russian spanish turkish
+```
+
+By default, this will make a new folder `italki_data` with `.txt` files named with their document id, as well as a label csv file:
+```
+document_id, author_id, L1, english_proficiency
+142576, 32162, Turkish, 2
+248781, 12987, French, 4
+...
+```
+## A simple benchmark (WIP)
+In the `benchmarks` folder there are 2 scripts:
+1. `italki_nli.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models
+2. `train_bert.py` - Trains a simple bert model using the dataset.
+
+Feel free to use and adapt these for your own research.
 
 ## Citation
 If you use this dataset in your work, please cite:
