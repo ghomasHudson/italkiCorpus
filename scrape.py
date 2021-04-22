@@ -1,190 +1,142 @@
-# -*- coding: utf-8 -*-
-from __future__ import print_function
-from __future__ import division
-
-#Get JSON result of italki queries
-#'import socket
-#import socks
+import argparse
 import requests
-import json
-import re
 import os
 import sys
-import argparse
+import re
+import csv
 
-#TOR SETUP
-'''
-ipcheck_url = 'http://checkip.amazonaws.com/'
-print("ip",requests.get(ipcheck_url).text)
-socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, '127.0.0.1', 9050)
-noTor = socket.socket
-tor = socks.socksocket
-#socket.socket = tor
-print("Getting TOR ip...")
-print("TOR ip",requests.get(ipcheck_url).text)
-'''
+def save_document(doc_id, output_dir, csv_writer):
+    '''Gather document details'''
 
+    # Get document details
+    url = "https://www.italki.com/api/notebook/"+str(doc_id)+""
+    r = requests.get(url)
+    doc = {"document_id": doc_id}
+    doc["content"] = r.json()["data"]["content"]
 
-def drawLoadingBar(val,maximum):
-	if val <= maximum:
-		val = min(val,maximum) # prevent overshooting
-		maxLength = 50
-		barLength = int((val/maximum)*maxLength)
-		percentage = (val/maximum)*100.0
-		if sys.version_info[:2] <= (2, 7):
-			barStr = "|"+"█"*barLength + " "*(maxLength-barLength-1)+"|"
-		else:
-			barStr = "|"+"█"*barLength + "▒"*(maxLength-barLength-1)+"|"
-		barStr += " "+ '{0:.2f}'.format(percentage)+"%" + " ("+ str(val)+"/" + str(maximum)+ ")"
-		print(barStr+"\r",end="")
-	else:
-	    print()
+    # Get author details
+    url = "https://www.italki.com/api/user/"+str(r.json()["data"]['author_obj']['id'])+""
+    r = requests.get(url)
+    author = r.json()['data']
+    doc['author_obj'] = author
+    doc["author_id"] = author["id"]
 
+    # Find native language (Language most proficient in)
+    max_prof_idx = 0
+    languages = doc["author_obj"]["language_obj_s"]
+    for i in range(len(languages)):
+        if languages[i]["is_learning"] == 0 and languages[i]["level"] > languages[max_prof_idx]["level"]:
+            max_prof_idx = i
+    doc["L1"] = languages[max_prof_idx]["language"]
 
-#******* MAIN CODE *********
-def getDocuments(outputDir,languages,maxPerLang=1000):
+    # Get english proficiency
+    for l in doc["author_obj"]["language_obj_s"]:
+        if l["language"] == "english":
+            doc["english_proficiency"] = l["level"]
 
-	#Create output directories
-	try:
-		os.makedirs(outputDir)
-	except:
-		pass
-	try:
-		os.makedirs(outputDir+"/tokenized")
-	except:
-		pass
+    del doc["author_obj"]  # Get rid of extra info
 
-	#Get languages
-	for language in languages:
-
-		docsOutput = []
-
-		#Check if some documents have already been downloaded
-		# filename = os.path.join(outputDir,language+".json")
-		# currentCount = 0
-		# try:
-		# 	f = open(filename,"r")
-		# 	docsOutput = json.load(f)
-		# 	f.close()
-		# 	currentCount = len(docsOutput)
-		# except:
-		# 	pass
-		currentCount = 0
-		print()
-		print(language)
-		page = currentCount//15
-		#page = 50
-		while currentCount < maxPerLang:
-			#get list of notebooks
-			api = "https://www.italki.com/api/notebook?&author_language="+language+"&language="+"english"+"&page="+str(page)
-			r = requests.get(api)
-
-			#Check if last page
-			if not(json.loads(r.text)['meta']['has_next']):
-				print("NO MORE PAGES")
-				break
-
-			docs = json.loads(r.text)['data']
-
-			for i,d in enumerate(docs):
-				if currentCount > maxPerLang:
-					break
-
-				drawLoadingBar(currentCount,maxPerLang)
-				currentCount += 1
-				#Get full notebook
-				#print("getting notebook...")
-				url = "https://www.italki.com/api/notebook/"+str(d['id'])+""
-				r = requests.get(url)
-				try:
-					doc = json.loads(r.text)['data']
-
-					#Check id is unique
-					goodId = True
-					for d in docsOutput:
-						if d["id"] == doc["id"]:
-							goodId = False
-					if goodId:
-						#Get full author
-						url = "https://www.italki.com/api/user/"+str(doc['author_obj']['id'])+""
-						r = requests.get(url)
-						author = json.loads(r.text)['data']
-						doc['author_obj'] = author
-						doc['NL'] = re.sub(r'\([^)]*\)', '',language)
-						
-						#Tokenize data
-						#	TODO
-						from nltk.tokenize import TweetTokenizer
-						tknzr = TweetTokenizer()
-						tk = " ".join(tknzr.tokenize(doc["content"]))
-
-						#Write to file
-						import codecs
-						f = codecs.open(outputDir+"/tokenized/"+str(doc["id"])+".txt",'w','utf-8')
-						f.write(tk)
-						f.close()
-
-						#Add index entry
-						f = open(outputDir+"/index.csv","a")
-
-						proficiency = 0
-						for l in doc["author_obj"]["language_obj_s"]:
-							if l["language"] == "english":
-								proficiency = l["level"]
-						s = str(doc["id"])+".txt,0,"+doc["NL"]+","+str(proficiency)+"\n"
-						f.write(s)
-						f.close()
-				
-						docsOutput.append(doc)
-					else:
-						#print("Duplicate id")
-						pass
-
-				except Exception as err:
-					print(err)
-					import sys
-					print(sys.exc_info())
-
-			page+=1
+    # Save content
+    open(os.path.join(output_dir, str(doc_id) + ".txt"), 'w').write(doc["content"])
+    del doc["content"]
+    csv_writer.writerow(doc)
 
 
-# def main(params,inDir,outDir):
-# 	print(outDir)
-# 	getDocuments(outDir,params[0]["value"],params[1]["value"])
-
+def drawLoadingBar(val, maximum):
+    if val <= maximum:
+        val = min(val, maximum)  # prevent overshooting
+        maxLength = 50
+        barLength = int((val/maximum)*maxLength)
+        percentage = (val/maximum)*100.0
+        if sys.version_info[:2] <= (2, 7):
+            barStr = "|"+"█"*barLength + " "*(maxLength-barLength-1)+"|"
+        else:
+            barStr = "|"+"█"*barLength + "▒"*(maxLength-barLength-1)+"|"
+        barStr += " " + '{0:.2f}'.format(percentage)+"%" + " (" + str(val)+"/" + str(maximum) + ")"
+        print(barStr+"\r", end="")
+    else:
+        print()
 
 if __name__ == "__main__":
+    print("Getting language list...")
+    r = requests.get("https://www.italki.com/i18n/en_us.json?v=v1.2.0")
+    languages = []
+    for c in r.json().keys():
+        if c.lower() == c:
+            languages.append(c)
 
-	print("Getting language list...")
-	#Get list of constants
-	r = requests.get("https://www.italki.com/i18n/en_us.json?v=v1.2.0")
-	constants = json.loads(r.text)
-	languages = []
-	for c in constants.keys():
-		if c.lower() == c:
-			languages.append(c)
+    #Parse CLI arguments
+    parser = argparse.ArgumentParser(description='Download raw documents from italki.')
+    parser.add_argument('-s', '--output-dir',
+                        required=False,
+                        default="italki_data",
+                        help='Directory to output documents')
+    subparsers = parser.add_subparsers(help='help for subcommand', dest="command", required=True)
+
+    # create the parser for the "command_1" command
+    parser_a = subparsers.add_parser('scrape', help='Scrape new documents from italki')
+    parser_a.add_argument('-r', '--max-per-lang',
+                          required=False,
+                          type=int,
+                          default=1000,
+                          help='Maximum number of documents to be downloaded per language')
+    parser_a.add_argument('languages',
+                          nargs='+',
+                          choices=languages,
+                          help='List of languages to download')
+
+    # create the parser for the "command_2" command
+    parser_b = subparsers.add_parser('recreate', help='Recreate an existing dataset')
+    parser_b.add_argument('id_file', type=argparse.FileType("r"), help='List of italki ids')
+
+    args = parser.parse_args()
+
+    # Make data dir
+    try:
+        os.mkdir(args.output_dir)
+    except:
+        print("Cannot create italki_data directory")
+        sys.exit()
 
 
-	#Parse CLI arguments
-	parser = argparse.ArgumentParser(description='Download raw documents.')
-	parser.add_argument('langs',
-						nargs='+', 
-						choices=languages,
-	                    help='List of languages to download')
-	parser.add_argument('-s', '--output-dir',
-						required=False,
-						default="italki",
-	                    help='Directory to output documents')
-	parser.add_argument('-r', '--max-per-lang',
-						required=False,
-						type=int,
-						default=1000,
-	                    help='Maximum number of documents to be downloaded per language')
-	args = parser.parse_args()
-	print("Languages valid")
+    if args.command == "scrape":
+        with open(os.path.join(args.output_dir, "labels.csv"), 'w') as f:
+            writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
+            writer.writeheader()
+        for language in args.languages:
+            currentCount = 0
+            print()
+            print(language)
+            page = currentCount//15
 
+            while currentCount < args.max_per_lang:
+                # get list of notebooks
+                api = "https://www.italki.com/api/notebook?&author_language="+language+"&language="+"english"+"&page="+str(page)
+                r = requests.get(api)
 
-	#Call main code
-	print("Creating corpus at :",args.output_dir,"...\n\n")
-	getDocuments(args.output_dir,args.langs,args.max_per_lang)
-	print("\n\nDONE!")
+                # Check if last page
+                if not(r.json()['meta']['has_next']):
+                    print("NO MORE PAGES")
+                    break
+
+                docs = r.json()['data']
+
+                for i, d in enumerate(docs):
+                    if currentCount > args.max_per_lang:
+                        break
+                    drawLoadingBar(currentCount, args.max_per_lang)
+                    currentCount += 1
+
+                    save_document(d["id"], args.output_dir, writer)
+    elif args.command == "recreate":
+        writers = {}
+        lines = list(args.id_file.readlines()[1:])
+        for i, line in enumerate(lines):
+            doc_id, split = line.strip().split(",")
+            if split not in writers.keys():
+                f = open(os.path.join(args.output_dir, "labels." + split + ".csv"), 'w')
+                writers[split] = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
+                writers[split].writeheader()
+
+            save_document(doc_id, args.output_dir, writers[split])
+            drawLoadingBar(i, len(lines))
