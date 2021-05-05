@@ -8,14 +8,14 @@ Due to copyright reasons we don't publish the raw data. Instead, tools are provi
 
 To recreate the exact same dataset as collected in 2017, pass the ID list file:
 
-```
-python scrape.py recreate 2017_ids.txt
+```bash
+python3 scrape.py recreate 2017_ids.txt
 ```
 
 Collect your own new data using:
 
-```
-python scrape.py scrape arabic chinese french german hindi italian japanese korean russian spanish turkish
+```bash
+python3 scrape.py scrape arabic chinese french german hindi italian japanese korean russian spanish turkish
 ```
 
 By default, this will make a new folder `italki_data` with `.txt` files named with their document id, as well as a label csv file:
@@ -30,7 +30,14 @@ In the `benchmarks` folder there are 2 scripts:
 1. `italki_nli.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models
 2. `train_bert.py` - Trains a simple bert model using the dataset.
 
-Feel free to use and adapt these for your own research.
+Feel free to use and adapt these for your own research. To include this in your own script, you can write:
+```python
+import datasets
+ds = datasets.load_dataset("italki_nli", data="../italki_data")
+print(ds["train"][0])
+>>> {"document": "Today I went to...", "native_language": French", "proficiency": 5,...}
+...
+```
 
 ## Citation
 If you use this dataset in your work, please cite:

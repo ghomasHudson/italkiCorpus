@@ -16,6 +16,9 @@ def save_document(doc_id, output_dir, csv_writer):
     # Get document details
     url = "https://www.italki.com/api/notebook/"+str(doc_id)+""
     r = requests.get(url)
+    if r.status_code != 200:
+        print(str(doc_id)+" not found")
+        return
     doc = {"document_id": doc_id}
     doc["content"] = r.json()["data"]["content"]
 
@@ -108,31 +111,31 @@ if __name__ == "__main__":
         with open(os.path.join(args.output_dir, "labels.csv"), 'w') as f:
             writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
             writer.writeheader()
-        for language in args.languages:
-            currentCount = 0
-            print()
-            print(language)
-            page = currentCount//15
+            for language in args.languages:
+                currentCount = 0
+                print()
+                print(language)
+                page = currentCount//15
 
-            while currentCount < args.max_per_lang:
-                # get list of notebooks
-                api = "https://www.italki.com/api/notebook?&author_language="+language+"&language="+"english"+"&page="+str(page)
-                r = requests.get(api)
+                while currentCount < args.max_per_lang:
+                    # get list of notebooks
+                    api = "https://www.italki.com/api/notebook?&author_language="+language+"&language="+"english"+"&page="+str(page)
+                    r = requests.get(api)
 
-                # Check if last page
-                if not(r.json()['meta']['has_next']):
-                    print("NO MORE PAGES")
-                    break
-
-                docs = r.json()['data']
-
-                for i, d in enumerate(docs):
-                    if currentCount > args.max_per_lang:
+                    # Check if last page
+                    if not(r.json()['meta']['has_next']):
+                        print("NO MORE PAGES")
                         break
-                    drawLoadingBar(currentCount, args.max_per_lang)
-                    currentCount += 1
 
-                    save_document(d["id"], args.output_dir, writer)
+                    docs = r.json()['data']
+
+                    for i, d in enumerate(docs):
+                        if currentCount > args.max_per_lang:
+                            break
+                        drawLoadingBar(currentCount, args.max_per_lang)
+                        currentCount += 1
+
+                        save_document(d["id"], args.output_dir, writer)
     elif args.command == "recreate":
         writers = {}
         lines = list(args.id_file.readlines()[1:])
