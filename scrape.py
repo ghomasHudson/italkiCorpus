@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""Scrape the native language and text from italki notebooks"""
+
 import argparse
 import requests
 import os
