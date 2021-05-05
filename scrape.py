@@ -65,6 +65,7 @@ def drawLoadingBar(val, maximum):
     else:
         print()
 
+
 if __name__ == "__main__":
     print("Getting language list...")
     r = requests.get("https://www.italki.com/i18n/en_us.json?v=v1.2.0")
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         if c.lower() == c:
             languages.append(c)
 
-    #Parse CLI arguments
+    # Parse CLI arguments
     parser = argparse.ArgumentParser(description='Download raw documents from italki.')
     parser.add_argument('-s', '--output-dir',
                         required=False,
@@ -105,7 +106,6 @@ if __name__ == "__main__":
     except:
         print("Cannot create italki_data directory")
         sys.exit()
-
 
     if args.command == "scrape":
         with open(os.path.join(args.output_dir, "labels.csv"), 'w') as f:
