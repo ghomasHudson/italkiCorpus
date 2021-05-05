@@ -11,6 +11,9 @@ def save_document(doc_id, output_dir, csv_writer):
     # Get document details
     url = "https://www.italki.com/api/notebook/"+str(doc_id)+""
     r = requests.get(url)
+    if r.status_code != 200:
+        print(str(doc_id)+" not found")
+        return
     doc = {"document_id": doc_id}
     doc["content"] = r.json()["data"]["content"]
 
