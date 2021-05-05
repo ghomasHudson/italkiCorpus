@@ -35,7 +35,7 @@ Feel free to use and adapt these for your own research. To include this in your 
 import datasets
 ds = datasets.load_dataset("./italki", data="../italki_data")
 print(ds["train"][0])
->>> {"document": "Today I went to...", "native_language": French", "proficiency": 5, ...}
+>>> {"document": "Today I went to...", "native_language": "French", "proficiency": 5, ...}
 ...
 ```
 
