@@ -9,13 +9,13 @@ Due to copyright reasons we don't publish the raw data. Instead, tools are provi
 To recreate the exact same dataset as collected in 2017, pass the ID list file:
 
 ```bash
-python scrape.py recreate 2017_ids.txt
+python3 scrape.py recreate 2017_ids.txt
 ```
 
 Collect your own new data using:
 
 ```bash
-python scrape.py scrape arabic chinese french german hindi italian japanese korean russian spanish turkish
+python3 scrape.py scrape arabic chinese french german hindi italian japanese korean russian spanish turkish
 ```
 
 By default, this will make a new folder `italki_data` with `.txt` files named with their document id, as well as a label csv file:
