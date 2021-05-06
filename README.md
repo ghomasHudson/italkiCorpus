@@ -80,7 +80,9 @@ engines such as <a href="https://g.co/datasetsearch">Google Dataset Search</a>.
   </tr>
   <tr>
     <td>description</td>
-    <td><code itemprop="description">This repository contains the italki Native Language Identification (NLI) dataset. It includes scripts to download the data along with the ids to recreate the 2017 dataset.</code></td>
+    <td><code itemprop="description">Native Language Identification (NLI) is the task of identifying an author’s native language from their writings in a second language. This dataset (italki) consists of large quantities of text from the language learning website italki. The italki website creates a community for language learners to access teaching resources, practice speaking, discuss topics and ask questions in their target language (the English language). We gather free-form ‘Notebook’ documents, which are mainly autobiographical diary entries with connected profiles describing the native language of the author.
+      
+This repository contains scripts to download the data along with the ids to recreate the 2017 dataset.</code></td>
   </tr>
   <tr>
     <td>citation</td>
