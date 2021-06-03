@@ -23,8 +23,12 @@ def save_document(doc_id, output_dir, csv_writer):
     doc["content"] = r.json()["data"]["content"]
 
     # Get author details
+    author_id = str(r.json()["data"]['author_obj']['id'])
     url = "https://www.italki.com/api/user/"+str(r.json()["data"]['author_obj']['id'])+""
     r = requests.get(url)
+    if r.status_code != 200:
+        print("Author with id % not found" % author_id)
+        return
     author = r.json()['data']
     doc['author_obj'] = author
     doc["author_id"] = author["id"]
