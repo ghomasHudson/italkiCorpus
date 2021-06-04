@@ -73,7 +73,7 @@ test_author = {
     }
 }
 
-def test_save_document():
+def test_save_document_normal():
     '''Tests that we can save a document given the id'''
     with requests_mock.Mocker()as m:
         with tempfile.TemporaryDirectory() as tmpdirname:
@@ -87,4 +87,14 @@ def test_save_document():
             assert open(os.path.join(tmpdirname, "1234.txt")).read() == test_document["data"]["content"]
 
 
-
+def test_save_document_404():
+    '''Tests that we can handle a 404'''
+    with requests_mock.Mocker()as m:
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            csv_filename = os.path.join(tmpdirname, "test.csv")
+            with open(csv_filename, 'w') as f:
+                writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
+                m.get("https://www.italki.com/api/notebook/1234", status_code=404)
+                save_document("1234", tmpdirname, writer)
+            assert open(csv_filename).read() == ""
+            assert not os.path.isfile(os.path.join(tmpdirname, "1234.txt"))
