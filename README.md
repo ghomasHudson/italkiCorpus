@@ -27,7 +27,7 @@ document_id, author_id, L1, english_proficiency
 ```
 ## A simple benchmark (WIP)
 In the `benchmark` folder there are 2 scripts:
-1. `italki_nli.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models.
+1. `italki/italki.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models.
 2. `train_bert.sh` - Trains a simple bert model using the dataset.
 
 Feel free to use and adapt these for your own research. To include this in your own script, you can write:
