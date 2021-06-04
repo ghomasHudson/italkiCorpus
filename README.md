@@ -33,7 +33,7 @@ In the `benchmarks` folder there are 2 scripts:
 Feel free to use and adapt these for your own research. To include this in your own script, you can write:
 ```python
 import datasets
-ds = datasets.load_dataset("./italki", data="../italki_data")
+ds = datasets.load_dataset("./benchmarks/italki", data="../italki_data")
 print(ds["train"][0])
 >>> {"document": "Today I went to...", "native_language": "French", "proficiency": 5, ...}
 ...
