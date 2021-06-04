@@ -30,7 +30,7 @@ In the `benchmark` folder there are 2 scripts:
 1. `italki/italki.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models.
 2. `train_bert.sh` - Trains a simple bert model using the dataset.
 
-Feel free to use and adapt these for your own research. To include this in your own script, you can write:
+Feel free to use and adapt these for your own research. To include the huggingface datasets version in your own script, you can write:
 ```python
 import datasets
 ds = datasets.load_dataset("./benchmark/italki", data="../italki_data")
