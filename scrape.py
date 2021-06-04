@@ -65,8 +65,7 @@ def drawLoadingBar(val, maximum):
     else:
         print()
 
-
-if __name__ == "__main__":
+def parse_args(args):
     print("Getting language list...")
     r = requests.get("https://www.italki.com/i18n/en_us.json?v=v1.2.0")
     languages = []
@@ -98,8 +97,9 @@ if __name__ == "__main__":
     parser_b = subparsers.add_parser('recreate', help='Recreate an existing dataset')
     parser_b.add_argument('id_file', type=argparse.FileType("r"), help='List of italki ids')
 
-    args = parser.parse_args()
+    return parser.parse_args(args)
 
+def main(args):
     # Make data dir
     try:
         os.mkdir(args.output_dir)
@@ -148,3 +148,6 @@ if __name__ == "__main__":
 
             save_document(doc_id, args.output_dir, writers[split])
             drawLoadingBar(i, len(lines))
+
+if __name__ == "__main__":
+    main(parse_args(sys.argv[1:]))
