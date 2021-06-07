@@ -83,12 +83,12 @@ def test_save_document_normal():
         with tempfile.TemporaryDirectory() as tmpdirname:
             csv_filename = os.path.join(tmpdirname, "test.csv")
             with open(csv_filename, 'w') as f:
-                writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
+                # writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
                 test_document, test_author = make_mocks("1234", "1234", "hindi")
                 m.get("https://www.italki.com/api/notebook/1234", text=json.dumps(test_document))
                 m.get("https://www.italki.com/api/user/1234", text=json.dumps(test_author))
-                save_document("1234", tmpdirname, writer)
-            assert open(csv_filename).read() == "1234,1234,hindi,0\n"
+                doc = save_document("1234", tmpdirname)
+            assert doc == {"document_id": test_document["data"]["id"], "author_id": test_author["data"]["id"], "L1": "hindi", "english_proficiency": 0}
             assert open(os.path.join(tmpdirname, "1234.txt")).read() == test_document["data"]["content"]
 
 
@@ -100,8 +100,8 @@ def test_save_document_404():
             with open(csv_filename, 'w') as f:
                 writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
                 m.get("https://www.italki.com/api/notebook/1234", status_code=404)
-                save_document("1234", tmpdirname, writer)
-            assert open(csv_filename).read() == ""
+                doc = save_document("1234", tmpdirname)
+            assert doc is None
             assert not os.path.isfile(os.path.join(tmpdirname, "1234.txt"))
 
 
@@ -135,7 +135,7 @@ def test_recreate():
             m.get("https://www.italki.com/api/notebook/4", text=json.dumps(test_document4))
             main(SimpleNamespace(
                 command="recreate",
-                agents=1,
+                num_agents=1,
                 output_dir=os.path.join(tmpdirname, "output"),
                 id_file=open(os.path.join(tmpdirname, "test_ids.txt"))
             ))
@@ -143,7 +143,8 @@ def test_recreate():
             assert open(os.path.join(tmpdirname, "output", "2.txt")).read() == test_document2["data"]["content"]
             assert open(os.path.join(tmpdirname, "output", "3.txt")).read() == test_document3["data"]["content"]
             assert open(os.path.join(tmpdirname, "output", "4.txt")).read() == test_document4["data"]["content"]
-            assert open(os.path.join(tmpdirname, "output", "labels.train.csv")).read() == "document_id,author_id,L1,english_proficiency\n1,1234,hindi,0\n4,12344,french,5\n"
+            print(open(os.path.join(tmpdirname, "output", "labels.train.csv")).readlines())
+            assert set(open(os.path.join(tmpdirname, "output", "labels.train.csv")).readlines()) == set(["document_id,author_id,L1,english_proficiency\n", "1,1234,hindi,0\n", "4,12344,french,5\n"])
             assert open(os.path.join(tmpdirname, "output", "labels.test.csv")).read() == "document_id,author_id,L1,english_proficiency\n2,1234,hindi,0\n"
             assert open(os.path.join(tmpdirname, "output", "labels.dev.csv")).read() == "document_id,author_id,L1,english_proficiency\n3,1234,hindi,0\n"
 

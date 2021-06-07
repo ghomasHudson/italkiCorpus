@@ -9,10 +9,11 @@ import os
 import sys
 import re
 import csv
-from multiprocessing import Pool
+import glob
+from multiprocessing import Pool, Lock
 
 
-def save_document(doc_id, output_dir, csv_writer):
+def save_document(doc_id, output_dir):
     '''Gather document details'''
 
     # Get document details
@@ -53,7 +54,7 @@ def save_document(doc_id, output_dir, csv_writer):
     # Save content
     open(os.path.join(output_dir, str(doc_id) + ".txt"), 'w').write(doc["content"])
     del doc["content"]
-    csv_writer.writerow(doc)
+    return doc
 
 
 def drawLoadingBar(val, maximum):
@@ -106,7 +107,10 @@ def parse_args(args):
 
     return parser.parse_args(args)
 
+
+
 def main(args):
+    global _process_line
     # Make data dir
     try:
         os.mkdir(args.output_dir)
@@ -141,26 +145,38 @@ def main(args):
                             break
                         drawLoadingBar(currentCount, args.max_per_lang)
                         currentCount += 1
+                        writer.writerow(save_document(d["id"], args.output_dir))
 
-                        save_document(d["id"], args.output_dir, writer)
     elif args.command == "recreate":
-        writers = {}
         lines = list(args.id_file.readlines()[1:])
+
+        for split in ["train", "test", "dev"]:
+            with open(os.path.join(args.output_dir, "labels." + split + ".csv"), 'a') as f:
+                writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
+                writer.writeheader()
+
         indexes = []
         def _process_line(tup):
             index, line = tup
             doc_id, split = line.strip().split(",")
-            if split not in writers.keys():
-                f = open(os.path.join(args.output_dir, "labels." + split + ".csv"), 'w')
-                writers[split] = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
-                writers[split].writeheader()
+            doc = save_document(doc_id, args.output_dir)
+            if doc is not None:
+                l.acquire()
+                with open(os.path.join(args.output_dir, "labels." + split + ".csv"), 'a') as f:
+                    writer = csv.DictWriter(f, fieldnames=["document_id", "author_id", "L1", "english_proficiency"])
+                    writer.writerow(doc)
+                indexes.append(index)
+                drawLoadingBar(len(glob.glob(os.path.join(args.output_dir, "*.txt"))), len(lines))
+                l.release()
 
-            save_document(doc_id, args.output_dir, writers[split])
-            indexes.append(index)
-            drawLoadingBar(len(indexes), len(lines))
+        def init(l):
+            global lock
+            lock = l
 
-        with Pool(processes=args.agents) as pool:
-            result = pool.map(_process_line, enumerate(lines), 1)
+        l = Lock()
+        print("start pool")
+        with Pool(processes=args.num_agents, initializer=init, initargs=(l,)) as pool:
+            _ = pool.map(_process_line, enumerate(lines), 1)
 
 if __name__ == "__main__":
     main(parse_args(sys.argv[1:]))
