@@ -103,7 +103,7 @@ if __name__ == "__main__":
     # create the parser for the "command_2" command
     parser_b = subparsers.add_parser('recreate', help='Recreate an existing dataset')
     parser_b.add_argument('id_file', type=argparse.FileType("r"), help='List of italki ids')
-    parser_b.add_argument('agents', nargs='?', type=int, help='Number of concurrent agents to run', const=5, default=5)
+    parser_b.add_argument('--num_agents', type=int, help='Number of concurrent agents to run', default=5)
 
     args = parser.parse_args()
 
