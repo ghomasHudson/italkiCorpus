@@ -135,6 +135,7 @@ def test_recreate():
             m.get("https://www.italki.com/api/notebook/4", text=json.dumps(test_document4))
             main(SimpleNamespace(
                 command="recreate",
+                agents=1,
                 output_dir=os.path.join(tmpdirname, "output"),
                 id_file=open(os.path.join(tmpdirname, "test_ids.txt"))
             ))
