@@ -9,6 +9,8 @@ import os
 import sys
 import re
 import csv
+from multiprocessing import Pool
+
 
 def save_document(doc_id, output_dir, csv_writer):
     '''Gather document details'''
@@ -17,14 +19,18 @@ def save_document(doc_id, output_dir, csv_writer):
     url = "https://www.italki.com/api/notebook/"+str(doc_id)+""
     r = requests.get(url)
     if r.status_code != 200:
-        print(str(doc_id)+" not found")
+        print("% not found" % str(doc_id), file=sys.stderr)
         return
     doc = {"document_id": doc_id}
     doc["content"] = r.json()["data"]["content"]
 
     # Get author details
+    author_id = str(r.json()["data"]['author_obj']['id'])
     url = "https://www.italki.com/api/user/"+str(r.json()["data"]['author_obj']['id'])+""
     r = requests.get(url)
+    if r.status_code != 200:
+        print("Author with id % not found" % author_id, file=sys.stderr)
+        return
     author = r.json()['data']
     doc['author_obj'] = author
     doc["author_id"] = author["id"]
@@ -96,6 +102,7 @@ def parse_args(args):
     # create the parser for the "command_2" command
     parser_b = subparsers.add_parser('recreate', help='Recreate an existing dataset')
     parser_b.add_argument('id_file', type=argparse.FileType("r"), help='List of italki ids')
+    parser_b.add_argument('--num_agents', type=int, help='Number of concurrent agents to run', default=5)
 
     return parser.parse_args(args)
 
@@ -139,7 +146,9 @@ def main(args):
     elif args.command == "recreate":
         writers = {}
         lines = list(args.id_file.readlines()[1:])
-        for i, line in enumerate(lines):
+        indexes = []
+        def _process_line(tup):
+            index, line = tup
             doc_id, split = line.strip().split(",")
             if split not in writers.keys():
                 f = open(os.path.join(args.output_dir, "labels." + split + ".csv"), 'w')
@@ -147,7 +156,11 @@ def main(args):
                 writers[split].writeheader()
 
             save_document(doc_id, args.output_dir, writers[split])
-            drawLoadingBar(i, len(lines))
+            indexes.append(index)
+            drawLoadingBar(len(indexes), len(lines))
+
+        with Pool(processes=args.agents) as pool:
+            result = pool.map(_process_line, enumerate(lines), 1)
 
 if __name__ == "__main__":
     main(parse_args(sys.argv[1:]))
