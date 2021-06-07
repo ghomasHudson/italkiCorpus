@@ -71,8 +71,7 @@ def drawLoadingBar(val, maximum):
     else:
         print()
 
-
-if __name__ == "__main__":
+def parse_args(args):
     print("Getting language list...")
     r = requests.get("https://www.italki.com/i18n/en_us.json?v=v1.2.0")
     languages = []
@@ -105,8 +104,9 @@ if __name__ == "__main__":
     parser_b.add_argument('id_file', type=argparse.FileType("r"), help='List of italki ids')
     parser_b.add_argument('--num_agents', type=int, help='Number of concurrent agents to run', default=5)
 
-    args = parser.parse_args()
+    return parser.parse_args(args)
 
+def main(args):
     # Make data dir
     try:
         os.mkdir(args.output_dir)
@@ -161,3 +161,6 @@ if __name__ == "__main__":
 
         with Pool(processes=args.agents) as pool:
             result = pool.map(_process_line, enumerate(lines), 1)
+
+if __name__ == "__main__":
+    main(parse_args(sys.argv[1:]))

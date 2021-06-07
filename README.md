@@ -1,4 +1,4 @@
-# italkiCorpus
+# italkiCorpus ![example workflow](https://github.com/ghomasHudson/italkiCorpus/actions/workflows/python-app.yml/badge.svg)
 
 Dataset for our work: [On the Development of a Large Scale Corpus for Native Language Identification](https://sure.sunderland.ac.uk/id/eprint/10446/1/On%20the%20Development%20of%20Large%20Scale%20Corpus%20for%20Native%20Language%20Identification%20.pdf).
 
@@ -26,14 +26,14 @@ document_id, author_id, L1, english_proficiency
 ...
 ```
 ## A simple benchmark (WIP)
-In the `benchmarks` folder there are 2 scripts:
-1. `italki_nli.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models.
+In the `benchmark` folder there are 2 scripts:
+1. `italki/italki.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models.
 2. `train_bert.sh` - Trains a simple bert model using the dataset.
 
-Feel free to use and adapt these for your own research. To include this in your own script, you can write:
+Feel free to use and adapt these for your own research. To include the huggingface datasets version in your own script, you can write:
 ```python
 import datasets
-ds = datasets.load_dataset("./italki", data="../italki_data")
+ds = datasets.load_dataset("./benchmark/italki", data="../italki_data")
 print(ds["train"][0])
 >>> {"document": "Today I went to...", "native_language": "French", "proficiency": 5, ...}
 ...

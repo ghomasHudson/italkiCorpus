@@ -46,7 +46,7 @@ _URLs = {
 }
 
 
-class ItalkiNLI(datasets.GeneratorBasedBuilder):
+class Italki(datasets.GeneratorBasedBuilder):
     """TODO: Short description of my dataset."""
 
     VERSION = datasets.Version("1.1.0")
@@ -85,7 +85,7 @@ class ItalkiNLI(datasets.GeneratorBasedBuilder):
             "First clone the repo: https://github.com/ghomasHudson/italkiCorpus"
             "Then run `python3 scrape.py recreate 2017_ids.txt`. You can then load the"
             "dataset with:"
-            "`datasets.load_dataset('matinf', data_dir='path/to/folder/italkiCorpus/italki_data')`"
+            "`datasets.load_dataset('italki', data_dir='path/to/folder/italkiCorpus/italki_data')`"
         )
 
     def _split_generators(self, dl_manager):
