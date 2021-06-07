@@ -19,7 +19,7 @@ def save_document(doc_id, output_dir, csv_writer):
     url = "https://www.italki.com/api/notebook/"+str(doc_id)+""
     r = requests.get(url)
     if r.status_code != 200:
-        print("% not found" % str(doc_id), file=sys.stderr)
+        print("%s not found" % str(doc_id), file=sys.stderr)
         return
     doc = {"document_id": doc_id}
     doc["content"] = r.json()["data"]["content"]
@@ -29,7 +29,7 @@ def save_document(doc_id, output_dir, csv_writer):
     url = "https://www.italki.com/api/user/"+str(r.json()["data"]['author_obj']['id'])+""
     r = requests.get(url)
     if r.status_code != 200:
-        print("Author with id % not found" % author_id, file=sys.stderr)
+        print("Author with id %s not found" % author_id, file=sys.stderr)
         return
     author = r.json()['data']
     doc['author_obj'] = author
