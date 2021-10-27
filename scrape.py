@@ -126,10 +126,11 @@ def main(args):
                 currentCount = 0
                 print()
                 print(language)
-                page = currentCount//15
 
                 while currentCount < args.max_per_lang:
                     # get list of notebooks
+                    page = currentCount//15
+                    
                     api = "https://www.italki.com/api/notebook?&author_language="+language+"&language="+"english"+"&page="+str(page)
                     r = requests.get(api)
 
