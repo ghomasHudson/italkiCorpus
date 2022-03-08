@@ -28,7 +28,7 @@ document_id, author_id, L1, english_proficiency
 ## A simple benchmark (WIP)
 In the `benchmark` folder there are 2 scripts:
 1. `italki/italki.py` - Loads the data using the [Huggingface Datasets](https://github.com/huggingface/datasets) library. You can reuse this for your own models.
-2. `train_bert.sh` - Trains a simple bert model using the dataset.
+2. `train.py` - Trains a simple bert model using the dataset.
 
 Feel free to use and adapt these for your own research. To include the huggingface datasets version in your own script, you can write:
 ```python
@@ -81,7 +81,7 @@ engines such as <a href="https://g.co/datasetsearch">Google Dataset Search</a>.
   <tr>
     <td>description</td>
     <td><code itemprop="description">Native Language Identification (NLI) is the task of identifying an author’s native language from their writings in a second language. This dataset (italki) consists of large quantities of text from the language learning website italki. The italki website creates a community for language learners to access teaching resources, practice speaking, discuss topics and ask questions in their target language (the English language). We gather free-form ‘Notebook’ documents, which are mainly autobiographical diary entries with connected profiles describing the native language of the author.
-      
+
 This repository contains scripts to download the data along with the ids to recreate the 2017 dataset.</code></td>
   </tr>
   <tr>
