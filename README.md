@@ -75,10 +75,6 @@ engines such as <a href="https://g.co/datasetsearch">Google Dataset Search</a>.
     <td><code itemprop="url">https://github.com/ghomasHudson/italkiCorpus</code></td>
   </tr>
   <tr>
-    <td>sameAs</td>
-    <td><code itemprop="sameAs">https://github.com/ghomasHudson/italkiCorpus</code></td>
-  </tr>
-  <tr>
     <td>description</td>
     <td><code itemprop="description">Native Language Identification (NLI) is the task of identifying an author’s native language from their writings in a second language. This dataset (italki) consists of large quantities of text from the language learning website italki. The italki website creates a community for language learners to access teaching resources, practice speaking, discuss topics and ask questions in their target language (the English language). We gather free-form ‘Notebook’ documents, which are mainly autobiographical diary entries with connected profiles describing the native language of the author.
 
