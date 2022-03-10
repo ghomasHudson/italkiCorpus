@@ -5,7 +5,7 @@ import datasets
 import numpy as np
 
 batch_size = 8
-num_labels = 4
+num_labels = 11
 
 # Load data
 ds = datasets.load_dataset("./italki", data_dir="../italki_data")
@@ -16,7 +16,6 @@ model_name = "bert-base-cased"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels)
 max_input_length = tokenizer.max_model_input_sizes[model_name]
-
 
 # Tokenize
 ds = ds.map(lambda batch: tokenizer(

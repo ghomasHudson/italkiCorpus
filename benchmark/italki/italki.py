@@ -116,17 +116,18 @@ class Italki(datasets.GeneratorBasedBuilder):
         with open(os.path.join(filepath, "labels."+split+".csv"), encoding="utf8") as f:
             reader = csv.DictReader(f)
             for n, row in enumerate(reader):
-                text = open(os.path.join(filepath, row["document_id"]+".txt"), 'r').read()
+                if row["L1"] in self._info().features["native_language"].names:
+                    text = open(os.path.join(filepath, row["document_id"]+".txt"), 'r').read()
 
-                if row["english_proficiency"] == "":
-                    row["english_proficiency"] = -1
-                else:
-                    row["english_proficiency"] = int(row["english_proficiency"])
+                    if row["english_proficiency"] == "":
+                        row["english_proficiency"] = -1
+                    else:
+                        row["english_proficiency"] = int(row["english_proficiency"])
 
-                yield n, {
-                    "document": text,
-                    "document_id": row["document_id"],
-                    "author_id": row["author_id"],
-                    "native_language": row["L1"],
-                    "proficiency": row["english_proficiency"]
-                }
+                    yield n, {
+                        "document": text,
+                        "document_id": row["document_id"],
+                        "author_id": row["author_id"],
+                        "native_language": row["L1"],
+                        "proficiency": row["english_proficiency"]
+                    }
