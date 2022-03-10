@@ -32,11 +32,10 @@ In the `benchmark` folder there are 2 scripts:
 
 Feel free to use and adapt these for your own research. To include the huggingface datasets version in your own script, you can write:
 ```python
-import datasets
-ds = datasets.load_dataset("./benchmark/italki", data="../italki_data")
-print(ds["train"][0])
->>> {"document": "Today I went to...", "native_language": "French", "proficiency": 5, ...}
-...
+>>> import datasets
+>>> ds = datasets.load_dataset("./benchmark/italki", data="../italki_data")
+>>> print(ds["train"][0])
+{"document": "Today I went to...", "native_language": "French", "proficiency": 5, ...}
 ```
 
 ## Citation
@@ -73,10 +72,6 @@ engines such as <a href="https://g.co/datasetsearch">Google Dataset Search</a>.
   <tr>
     <td>url</td>
     <td><code itemprop="url">https://github.com/ghomasHudson/italkiCorpus</code></td>
-  </tr>
-  <tr>
-    <td>sameAs</td>
-    <td><code itemprop="sameAs">https://github.com/ghomasHudson/italkiCorpus</code></td>
   </tr>
   <tr>
     <td>description</td>
