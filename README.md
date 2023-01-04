@@ -2,6 +2,7 @@
 
 Dataset for our work: [On the Development of a Large Scale Corpus for Native Language Identification](https://sure.sunderland.ac.uk/id/eprint/10446/1/On%20the%20Development%20of%20Large%20Scale%20Corpus%20for%20Native%20Language%20Identification%20.pdf).
 
+*Note: The italki website has moved away from the notebooks used in this project. This code probably wont work anymore (at least till updated)*
 
 ## Gathering data
 Due to copyright reasons we don't publish the raw data. Instead, tools are provided to recreate NLI corpus from the italki website.
